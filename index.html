@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>WebP Character Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* 1920x1080 배경 */
+    .bg {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      margin: 0 auto;
+
+      background-image: url("web.ch_test.png");  /* 배경 이미지 파일명 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* 캐릭터가 들어갈 영역 (마스크 박스) */
+    .anim-wrapper {
+      position: absolute;
+      width: 1330px;
+      height: 438px;
+
+      /* 화면 가로 중앙, 위에서 300px 위치 */
+      left: 50%;
+      top: 300px;
+      transform: translateX(-50%);
+
+      overflow: hidden;   /* 이 박스 밖은 안 보이게 잘라냄 */
+      z-index: 10;        /* 배경보다 위 */
+    }
+
+    .anim-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+
+      /* 아래쪽으로 갈수록 투명해지는 페이드 마스크 (원치 않으면 아래 3줄 지우면 됨) */
+      -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+      mask-size: 100% 100%;
+      mask-repeat: no-repeat;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg">
+    <div class="anim-wrapper">
+      <!-- ch1_d.webp가 애니메이션 WebP여도 img 하나로 재생됨 -->
+      <img src="ch1_d.webp" alt="character" class="anim-img" />
+    </div>
+  </div>
+</body>
+</html>
