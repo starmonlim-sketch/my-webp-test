@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebP Mask Test</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .bg {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    margin: 0 auto;
+    background-image: url("web.ch_test.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .anim-wrapper {
+    position: absolute;
+    width: 1330px;
+    height: 438px;
+    left: 50%;
+    top: 300px;
+    transform: translateX(-50%);
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  .anim-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+  <div class="anim-wrapper">
+    <img src="ch1_d.webp" class="anim-img" />
+  </div>
+</div>
+
+</body>
+</html>
