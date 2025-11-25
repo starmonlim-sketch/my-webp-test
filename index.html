@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>WebM Character Loop Control</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    overflow: hidden;
+  }
+
+  /* 1920x1080 배경 */
+  .bg {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    margin: 0 auto;
+    background-image: url("web.ch_test.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* 캐릭터 표시 영역 (마스킹 박스) */
+  .anim-wrapper {
+    position: absolute;
+    width: 254px;   /* webm 원본 사이즈 */
+    height: 653px;
+    left: 50%;
+    top: 200px;
+    transform: translateX(-50%);
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    /* 아래쪽 페이드 마스크 */
+    -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+  }
+
+  /* 버튼 영역 */
+  .btns {
+    position: absolute;
+    left: 50%;
+    top: 900px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 20;
+  }
+
+  button {
+    padding: 14px 28px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+  }
+
+  #btn_idle { background: #3a6df0; }
+  #btn_speaking { background: #e44d26; }
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+
+  <!-- 캐릭터 WebM -->
+  <div class="anim-wrapper">
+    <video id="char" autoplay muted playsinline>
+      <source src="ch1_anim.webm" type="video/webm">
+    </video>
+  </div>
+
+  <!-- 버튼 -->
+  <div class="btns">
+    <button id="btn_idle">Idle</button>
+    <button id="btn_speaking">Speaking</button>
+  </div>
+
+</div>
+
+<script>
+/* ------------------------------
+   프레임/구간 설정 (30fps)
+------------------------------ */
+const FPS = 30;
+const idleRange  = { start: 0,  end: 44 };   // 0~44f
+const speakRange = { start: 44, end: 165 };  // 44~167f
+
+const toTime = f => f / FPS;
+
+const video = document.getElementById("char");
+let currentRange = idleRange;
+
+/* 현재 구간으로 점프 */
+function setRange(range) {
+  currentRange = range;
+  video.currentTime = toTime(range.start);
+  // 혹시 멈춰 있으면 다시 재생
+  if (video.paused) video.play();
+}
+
+/* requestAnimationFrame 으로 항상 구간 체크 */
+function loopController() {
+  if (video.readyState >= 2) { // 메타데이터 로드됨
+    const endTime = toTime(currentRange.end);
+    if (video.currentTime >= endTime) {
+      video.currentTime = toTime(currentRange.start);
+      if (video.paused) video.play();
+    }
+  }
+  requestAnimationFrame(loopController);
+}
+
+/* 메타데이터 로드 후 idle로 시작 */
+video.addEventListener("loadedmetadata", () => {
+  setRange(idleRange);
+  video.play();
+  loopController();
+});
+
+/* 버튼 제어 */
+document.getElementById("btn_idle").addEventListener("click", () => {
+  setRange(idleRange);   // idle 구간 루프
+});
+
+document.getElementById("btn_speaking").addEventListener("click", () => {
+  setRange(speakRange);  // speaking 구간 루프
+});
+</script>
+
+</body>
+</html>
